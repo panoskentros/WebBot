@@ -9,8 +9,8 @@ import random
 
 driver = webdriver.Chrome()
 SLEEP_TIME = 2
-ECLASS_USERNAME ="ice23390133"
-ECLASS_PASSWORD = "3e793k5"
+ECLASS_USERNAME ="UsernameExample"
+ECLASS_PASSWORD = "PasswordExample"
 MESSAGE = "εδω κυριεεεε"
 locale.setlocale(locale.LC_TIME, "el_GR.utf8") 
 def login(): 
@@ -31,7 +31,7 @@ def navigate_to_course():
     page_button.click()
 
     next_button = WebDriverWait(driver, 10).until(
-    EC.element_to_be_clickable((By.XPATH, "//a[@href='https://eclass.uniwa.gr/courses/ICE271/']")) # Παταει το κουμπι με το αντοισιχο Path που επιλεγει ενα συγκεκριμενο μαθημα(271)
+    EC.element_to_be_clickable((By.XPATH, "//a[@href='https://eclass.uniwa.gr/courses/ICE271/']")) # Παταει το κουμπι με το αντοισιχο Path που επιλεγει το μαθημα 271, μπορειτε να το αλλαξετε με βαση το δικο σας μαθημα.
     )
     next_button.click()
 
