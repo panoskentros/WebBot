@@ -1,0 +1,14 @@
+services:
+  bot:
+    build: .
+    image: eclass-bot
+    container_name: eclass_bot_container
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DISPLAY=:99
+    stdin_open: true
+    tty: true

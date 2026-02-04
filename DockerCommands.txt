@@ -1,0 +1,14 @@
+# Standard Start (Foreground - shows logs)
+docker compose up
+
+# Start in Background (Detached - runs quietly)
+docker compose up -d
+
+# View logs while the bot is running in background
+docker compose logs -f
+
+# Rebuild and Start (Use after changing code or Dockerfile)
+docker compose up --build
+
+# Stop and remove the container
+docker compose down
