@@ -39,7 +39,10 @@ load_dotenv()
 ECLASS_USERNAME = os.getenv("ECLASS_USERNAME")
 ECLASS_PASSWORD = os.getenv("ECLASS_PASSWORD")
 
-print(f"Eclass Username: {ECLASS_USERNAME}\nEclass Password: {ECLASS_PASSWORD}")
+if ECLASS_USERNAME and ECLASS_PASSWORD:
+    print("Φορτώθηκαν τα στοιχεία σύνδεσης επιτυχώς!\nUsername:" + ECLASS_USERNAME)
+else:
+    print("Αποτυχία φόρτωσης στοιχείων σύνδεσης. Βεβαιωθείτε ότι έχετε δημιουργήσει το .env αρχείο")
 
 mathimata = { 
     "baseis2":"ICE279",
