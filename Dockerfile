@@ -23,4 +23,4 @@ COPY . .
 
 ENV DISPLAY=:99
 
-CMD ["python","-u", "ergastirioV3.py"]
+CMD ["python","-u", "ergastirio.py"]
