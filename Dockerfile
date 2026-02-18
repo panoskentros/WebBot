@@ -1,16 +1,9 @@
 FROM python:3.11-slim
 
 RUN apt-get update && apt-get install -y \
-    wget \
-    gnupg \
-    unzip \
-    curl \
-    xvfb \
-    libnss3 \
-    libgbm1 \
-    libasound2t64 \
     chromium \
     chromium-driver \
+    xvfb \
     locales \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
