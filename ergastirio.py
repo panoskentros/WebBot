@@ -49,12 +49,18 @@ mathimata = {
     "pse":"ICE243",
     "espu":"CS152",
     "dp":"CS131",
-    "TexnitiNoumosini":"CS210"
+    "TexnitiNoumosini":"CS210",
+    "Asfaleia": "ICE292",
+    "Katanemimena": "CS157",
+    "PSIFIAKES_EPIKOINWNIES": "CS119",
 }
 
 REFRESH_TIME = 0.3 
-mathima = mathimata["TexnitiNoumosini"]
-tmhmata = ["ΔΠΖ3 - Πέμπτη 16:00-18:00 - Κ10.022"]
+mathima = mathimata["PSIFIAKES_EPIKOINWNIES"]
+tmhmata = ["ΣΤ3-Α (Πέμπτη 2-4)","ΣΤ3-Β (Πέμπτη 2-4)","ΣΤ4-Α (Πέμπτη 4-6)","ΣΤ4-Β (Πέμπτη 4-6)"]
+
+print(f"Mathima: {mathima}\nTmhmata: {tmhmata}")
+
 
 # START_HOUR = 16
 # START_MINUTE = 7
@@ -88,16 +94,33 @@ def login():
     login_button.click()
 
 def navigate_to_course(id):
-    page_button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, "all_courses")))
-    page_button.click()
+    # page_button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, "all_courses")))
+    # page_button.click()
+    try:
+        page_button = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, "//a[contains(@href, 'portfolio.php?countPages=-1')]"))
+        )
+        page_button.click()
+    except:
+        print("\033[31mΔεν βρέθηκε το κουμπί 'Λίστα όλων'.\033[0m")
+        sys.exit()
     
     try:
-        course_link = WebDriverWait(driver, 4).until(
-            EC.element_to_be_clickable((By.XPATH, f"//a[@href='https://eclass.uniwa.gr/courses/{id}/']"))
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "portfolio_lessons"))
         )
+        
+        course_xpath = f"//a[contains(@href, '/courses/{id}')]"
+        course_link = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, course_xpath))
+        )
+        
+        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", course_link)
+        time.sleep(1) 
         course_link.click()
     except:
-         print(f"\033[31mΔεν εισαι εγγεγραμμένος σε αυτό το μάθημα\033[0m")
+         print(f"\033[31mΔεν βρέθηκε ο σύνδεσμος για το {id}. URL: {driver.current_url}\033[0m")
+         driver.save_screenshot("debug_portfolio.png")
          sys.exit()
 
     try:
