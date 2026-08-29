@@ -5,4 +5,4 @@ ECLASS_PASSWORD=το_τρομερο_password
 ECLASS_USERNAME=το_τρομερο_username
 
 
-3. τρεξε το container και voila
+3.τρεξε: docker compose up
