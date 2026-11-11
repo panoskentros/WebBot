@@ -11,17 +11,24 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 sys.stdout.reconfigure(encoding='utf-8')
+
+def log(msg):
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] {msg}", flush=True)
+
+log("Εκκίνηση προγράμματος...")
 options = uc.ChromeOptions()
 options.add_argument('--headless')
 options.add_argument('--no-sandbox')
 options.add_argument('--disable-dev-shm-usage')
 options.add_argument('--window-size=1920,1080')
 
+log(f"Εκκίνηση Chrome (headless) στο {platform.system()}...")
 if platform.system() == "Linux":
     options.binary_location = "/usr/bin/chromium"
     driver = uc.Chrome(options=options, driver_executable_path="/usr/bin/chromedriver")
 else:
     driver = uc.Chrome(options=options)
+log("Ο Chrome ξεκίνησε.")
 
 try:
     # Try Linux/Docker format first
@@ -45,19 +52,14 @@ else:
     print("Αποτυχία φόρτωσης στοιχείων σύνδεσης. Βεβαιωθείτε ότι έχετε δημιουργήσει το .env αρχείο")
 
 mathimata = { 
-    "baseis2":"ICE279",
-    "pse":"ICE243",
-    "espu":"CS152",
-    "dp":"CS131",
-    "TexnitiNoumosini":"CS210",
-    "Asfaleia": "ICE292",
-    "Katanemimena": "CS157",
-    "PSIFIAKES_EPIKOINWNIES": "CS119",
+    "asps" : "CS166"
 }
 
-REFRESH_TIME = 0.3 
-mathima = mathimata["PSIFIAKES_EPIKOINWNIES"]
-tmhmata = ["ΣΤ3-Α (Πέμπτη 2-4)","ΣΤ3-Β (Πέμπτη 2-4)","ΣΤ4-Α (Πέμπτη 4-6)","ΣΤ4-Β (Πέμπτη 4-6)"]
+REFRESH_TIME = 0.25 
+mathima = mathimata["asps"]
+
+tmhmata = ["ΤΕΤΑΡΤΗ 15:00 - 16:00 -- ΕΡΓΑΣΤΗΡΙΟ ΤΕΧΝΗΤΗΣ ΝΟΗΜΟΣΥΝΗΣ ΚΑΙ ΠΟΛΥΜΕΣΩΝ (K10.022)",
+            "ΤΕΤΑΡΤΗ 14:00 - 15:00 -- ΕΡΓΑΣΤΗΡΙΟ ΤΕΧΝΗΤΗΣ ΝΟΗΜΟΣΥΝΗΣ ΚΑΙ ΠΟΛΥΜΕΣΩΝ (K10.022)"]
 
 print(f"Mathima: {mathima}\nTmhmata: {tmhmata}")
 
@@ -81,30 +83,37 @@ print(f"Mathima: {mathima}\nTmhmata: {tmhmata}")
 
 
 
-def login(): 
+def login():
+    log("Άνοιγμα σελίδας σύνδεσης...")
     driver.get("https://eclass.uniwa.gr/main/login_form.php")
     WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.NAME, "uname")))
-    
-    username_input = driver.find_element(By.NAME, "uname") 
+    log("Η σελίδα σύνδεσης φορτώθηκε.")
+
+    username_input = driver.find_element(By.NAME, "uname")
     password_input = driver.find_element(By.NAME, "pass")
     login_button = driver.find_element(By.NAME, "submit")
 
+    log("Συμπλήρωση στοιχείων σύνδεσης...")
     username_input.send_keys(ECLASS_USERNAME)
     password_input.send_keys(ECLASS_PASSWORD)
+    log("Πάτημα κουμπιού σύνδεσης...")
     login_button.click()
 
 def navigate_to_course(id):
     # page_button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, "all_courses")))
     # page_button.click()
+    log("Αναζήτηση κουμπιού 'Λίστα όλων'...")
     try:
         page_button = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.XPATH, "//a[contains(@href, 'portfolio.php?countPages=-1')]"))
         )
         page_button.click()
+        log("Άνοιξε η λίστα όλων των μαθημάτων.")
     except:
         print("\033[31mΔεν βρέθηκε το κουμπί 'Λίστα όλων'.\033[0m")
         sys.exit()
-    
+
+    log(f"Αναζήτηση μαθήματος {id}...")
     try:
         WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, "portfolio_lessons"))
@@ -118,11 +127,13 @@ def navigate_to_course(id):
         driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", course_link)
         time.sleep(1) 
         course_link.click()
+        log(f"Άνοιξε το μάθημα {id}.")
     except:
          print(f"\033[31mΔεν βρέθηκε ο σύνδεσμος για το {id}. URL: {driver.current_url}\033[0m")
          driver.save_screenshot("debug_portfolio.png")
          sys.exit()
 
+    log("Αναζήτηση 'Ομάδες Χρηστών'...")
     try:
         omades_xristwn = WebDriverWait(driver, 4).until(
             EC.element_to_be_clickable((By.XPATH, f"//a[@href='/modules/group/index.php?course={id}']"))
@@ -132,17 +143,19 @@ def navigate_to_course(id):
         sys.exit()
         
     omades_xristwn.click()
-    
+    log("Άνοιξαν οι Ομάδες Χρηστών.")
+
     try:
         emfanisi_se_lista = WebDriverWait(driver, 4).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, "a.btn.submitAdminBtn.d-inline-flex")))
         emfanisi_se_lista.click()
+        log("Ενεργοποιήθηκε η εμφάνιση σε λίστα.")
     except:
-        pass
+        log("Δεν χρειάστηκε εμφάνιση σε λίστα.")
 
 login()
 navigate_to_course(mathima)
-print("Scanning...")
+log("Scanning...")
 
 cnt = 1
 i = 0
@@ -154,6 +167,7 @@ def NextCourseExists():
 
 while True:
     try:
+        log(f"Έλεγχος τμήματος: {tmhmata[i]}")
         row = WebDriverWait(driver, 2).until(
             EC.presence_of_element_located(
                 (By.XPATH, f"//td[(contains(text(), '{tmhmata[i]}') or .//*[contains(text(), '{tmhmata[i]}')])]")
@@ -173,9 +187,11 @@ while True:
                 driver.refresh()
                 continue
     except:
+            log("Το τμήμα δεν βρέθηκε στη σελίδα, ανανέωση...")
             driver.refresh()
             continue
-            
+
+    log("Βρέθηκε η γραμμή του τμήματος, προσπάθεια εγγραφής...")
     cols = row.find_elements(By.XPATH, ".//ancestor::tr//td") 
     try:
         button = row.find_element(By.XPATH, ".//following-sibling::td//a[contains(@href, 'group_id=')]")  
@@ -187,7 +203,7 @@ while True:
     except:
         third_col_text = cols[2].text.strip()
         if third_col_text.endswith("—"):
-            print(f"{cnt}. Οι εγγραφές δεν έχουν ανοίξει ακόμα")
+            log(f"{cnt}. Οι εγγραφές δεν έχουν ανοίξει ακόμα")
             cnt += 1
             time.sleep(REFRESH_TIME) 
             driver.refresh()
@@ -196,6 +212,7 @@ while True:
             parts = third_col_text.split('/')
             if len(parts) == 2 and parts[0].isdigit() and parts[1].isdigit():
                 if parts[0] == parts[1]:
+                    log(f"Το τμήμα είναι γεμάτο ({third_col_text}).")
                     if not NextCourseExists():
                         print("\033[33mΜου τελειωσαν οι επιλογές\033[0m")
                         break
@@ -203,6 +220,7 @@ while True:
                         driver.refresh()
                         continue  
 
+log("Τερματισμός, κλείσιμο του Chrome...")
 try:
     driver.close()
 except:
