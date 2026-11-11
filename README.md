@@ -6,3 +6,6 @@ ECLASS_USERNAME=το_τρομερο_username
 
 
 3.τρεξε: docker compose up
+
+
+for educational purposes only! use it at your own risk !
